@@ -8,19 +8,38 @@ public class PlayerController : MonoBehaviour
     public Rigidbody head;
     public LayerMask layerMask;
     public Animator bodyAnimator;
+    public float[] hitForce;
+    public float timeBetweenHits = 2.5f;
+    public Rigidbody marineBody;
 
+    private bool isDead = false;
+    private bool isHit = false;
+    private float timeSinceHit = 0;
+    private int hitNumber = -1;
     private Vector3 currentLookTarget = Vector3.zero;
     private CharacterController characterController;
+    private DeathParticles deathParticles;
 
-    private void Start()
+    void Start()
     {
         characterController = GetComponent<CharacterController>();
+        deathParticles = GetComponentInChildren<DeathParticles>();
     }
 
     void Update()
     {
         Vector3 moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         characterController.SimpleMove(moveDirection * moveSpeed);
+
+        if (isHit)
+        {
+            timeSinceHit += Time.deltaTime;
+            if (timeSinceHit > timeBetweenHits)
+            {
+                isHit = false;
+                timeSinceHit = 0;
+            }
+        }
     }
 
     void FixedUpdate()
@@ -49,5 +68,47 @@ public class PlayerController : MonoBehaviour
             Quaternion rotation = Quaternion.LookRotation(targetPosition - transform.position);
             transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * 10.0f);
         }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        Alien alien = other.gameObject.GetComponent<Alien>();
+        if (alien != null)
+        {
+            if (!isHit)
+            {
+                hitNumber += 1;
+                CameraShake cameraShake = Camera.main.GetComponent<CameraShake>();
+                if (hitNumber < hitForce.Length)
+                {
+                    cameraShake.intensity = hitForce[hitNumber];
+                    cameraShake.Shake();
+                }
+                else
+                {
+                    Die();
+                }
+                isHit = true;
+                SoundManager.Instance.PlayOneShot(SoundManager.Instance.hurt);
+            }
+            alien.Die();
+        }
+    }
+
+    public void Die()
+    {
+        bodyAnimator.SetBool("IsMoving", false);
+        marineBody.transform.parent = null;
+        marineBody.isKinematic = false;
+        marineBody.useGravity = true;
+        marineBody.gameObject.GetComponent<CapsuleCollider>().enabled = true;
+        marineBody.gameObject.GetComponent<Gun>().enabled = false;
+
+        Destroy(head.gameObject.GetComponent<HingeJoint>());
+        head.transform.parent = null;
+        head.useGravity = true;
+        SoundManager.Instance.PlayOneShot(SoundManager.Instance.marineDeath);
+        deathParticles.Activate();
+        Destroy(gameObject);
     }
 }
