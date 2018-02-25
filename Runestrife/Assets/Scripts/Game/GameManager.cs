@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     public AudioClip gameWinSound;
     public AudioClip gameLoseSound;
 
-    private bool gameOver;
+    public bool gameOver;
 
     void Awake()
     {

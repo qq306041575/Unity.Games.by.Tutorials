@@ -12,10 +12,12 @@ public class Enemy : MonoBehaviour
 
     private float freezeTimer;
     private int wayPointIndex = 0;
+    object lockObject;
 
     void Start()
     {
         EnemyManager.Instance.RegisterEnemy(this);
+        lockObject = new object();
     }
 
     void OnGotToLastWayPoint()
@@ -26,12 +28,15 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(float amountOfDamage)
     {
-        health -= amountOfDamage;
-
-        if (health <= 0)
+        lock(lockObject)
         {
-            DropGold();
-            Die();
+            health -= amountOfDamage;
+
+            if (health <= 0)
+            {
+                DropGold();
+                Die();
+            }
         }
     }
 

@@ -6,8 +6,20 @@ public class AutoScaler : MonoBehaviour
 {
     public float scaleSpeed;
 
+    Vector3 scale;
+
+    void Awake()
+    {
+        scale = transform.localScale;
+    }
+
     void Update()
     {
-        transform.localScale += (new Vector3(scaleSpeed, scaleSpeed, scaleSpeed) * Time.deltaTime);
+        scale += Vector3.one * scaleSpeed * Time.deltaTime;
+        if (scale.x < 0 || scale.y < 0 || scale.z < 0)
+        {
+            return;
+        }
+        transform.localScale = scale;
     }
 }

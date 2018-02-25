@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class WayPointManager : MonoBehaviour
 {
+    [System.Serializable]
+    public class Path
+    {
+        public List<Transform> WayPoints = new List<Transform>();
+    }
+
     public static WayPointManager Instance;
     public List<Path> Paths = new List<Path>();
 
@@ -16,10 +22,4 @@ public class WayPointManager : MonoBehaviour
     {
         return Paths[pathIndex].WayPoints[0].position;
     }
-}
-
-[System.Serializable]
-public class Path
-{
-    public List<Transform> WayPoints = new List<Transform>();
 }

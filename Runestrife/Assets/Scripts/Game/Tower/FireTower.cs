@@ -9,12 +9,10 @@ public class FireTower : Tower
     protected override void AttackEnemy()
     {
         base.AttackEnemy();
-        GameObject particles = (GameObject)Instantiate(fireParticlesPrefab, transform.position + new Vector3(0, .5f),
-        fireParticlesPrefab.transform.rotation);
+        GameObject particles = (GameObject)Instantiate(fireParticlesPrefab, transform.position + new Vector3(0, .5f), fireParticlesPrefab.transform.rotation);
         // Scale fire particle radius with the aggro radius
         particles.transform.localScale *= aggroRadius / 10f;
-        foreach (Enemy enemy in EnemyManager.Instance.GetEnemiesInRange(
-        transform.position, aggroRadius))
+        foreach (Enemy enemy in EnemyManager.Instance.GetEnemiesInRange(transform.position, aggroRadius))
         {
             enemy.TakeDamage(attackPower);
         }
