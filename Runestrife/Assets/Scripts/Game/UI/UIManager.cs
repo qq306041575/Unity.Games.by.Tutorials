@@ -1,111 +1,127 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿/*
+ * Copyright (c) 2016 Razeware LLC
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+ 
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
-{
-    public static UIManager Instance;
-    public GameObject addTowerWindow;
-    public GameObject towerInfoWindow;
-    public GameObject winGameWindow;
-    public GameObject loseGameWindow;
-    public GameObject blackBackground;
-    public GameObject centerWindow;
-    public GameObject damageCanvas;
-    public Text txtGold;
-    public Text txtWave;
-    public Text txtEscapedEnemies;
-    public static float vrUiScaleDivider = 12;
-    public Transform enemyHealthBars;
-    public GameObject enemyHealthBarPrefab;
+public class UIManager : MonoBehaviour {
+  public static UIManager Instance;
 
-    void Awake()
-    {
-        Instance = this;
-    }
+  //References
+  public Transform enemyHealthBars;
 
-    void Update()
-    {
-        UpdateTopBar();
-    }
+  public GameObject addTowerWindow;
+  public GameObject towerInfoWindow;
+  public GameObject winGameWindow;
+  public GameObject loseGameWindow;
+  public GameObject centerWindow;
 
-    public void ShowTowerInfoWindow(Tower tower)
-    {
-        if (GameManager.Instance.gameOver)
-        {
-            return;
-        }
-        towerInfoWindow.GetComponent<TowerInfoWindow>().tower = tower;
-        towerInfoWindow.SetActive(true);
-        UtilityMethods.MoveUiElementToWorldPosition(towerInfoWindow.GetComponent<RectTransform>(), tower.transform.position);
-    }
+  public GameObject damageCanvas;
 
-    private void UpdateTopBar()
-    {
-        txtGold.text = GameManager.Instance.gold.ToString();
-        txtWave.text = "Wave " + GameManager.Instance.waveNumber + " / " + WaveManager.Instance.enemyWaves.Count;
-        txtEscapedEnemies.text = "Escaped Enemies " + GameManager.Instance.escapedEnemies + " / " + GameManager.Instance.maxAllowedEscapedEnemies;
-    }
+  // Black transparent background
+  public GameObject blackBackground;
 
-    public void ShowAddTowerWindow(GameObject towerSlot)
-    {
-        if (GameManager.Instance.gameOver)
-        {
-            return;
-        }
-        addTowerWindow.SetActive(true);
-        addTowerWindow.GetComponent<AddTowerWindow>().towerSlotToAddTowerTo = towerSlot;
-        UtilityMethods.MoveUiElementToWorldPosition(addTowerWindow.GetComponent<RectTransform>(), towerSlot.transform.position);
-    }
+  // TopBar
+  public Text txtGold;
+  public Text txtWave;
+  public Text txtEscapedEnemies;
 
-    public void ShowWinScreen()
-    {
-        winGameWindow.SetActive(true);
-    }
+  //Prefabs
+  public GameObject enemyHealthBarPrefab;
 
-    public void ShowLoseScreen()
-    {
-        loseGameWindow.SetActive(true);
-    }
+  void Awake() {
+    Instance = this;
+  }
 
-    public void CreateHealthBarForEnemy(Enemy enemy)
-    {
-        GameObject healthBar = Instantiate(enemyHealthBarPrefab);
-        healthBar.transform.SetParent(enemyHealthBars, false);
-        healthBar.GetComponent<EnemyHealthBar>().enemy = enemy;
-    }
+  void Update() {
+    UpdateTopBar();
+  }
 
-    public void ShowCenterWindow(string text)
-    {
-        centerWindow.transform.Find("TxtWave").GetComponent<Text>().text = text;
-        StartCoroutine(EnableAndDisableCenterWindow());
-    }
+  private void UpdateTopBar() {
+    txtGold.text = GameManager.Instance.gold.ToString();
+    txtWave.text = "Wave " + GameManager.Instance.waveNumber + " / " + WaveManager.Instance.enemyWaves.Count;
+    txtEscapedEnemies.text = "Escaped Enemies " + GameManager.Instance.escapedEnemies + " / " +
+                             GameManager.Instance.maxAllowedEscapedEnemies;
+  }
 
-    private IEnumerator EnableAndDisableCenterWindow()
-    {
-        for (int i = 0; i < 3; i++)
-        {
-            yield return new WaitForSeconds(.4f);
-            centerWindow.SetActive(true);
-            yield return new WaitForSeconds(.4f);
-            centerWindow.SetActive(false);
-        }
-    }
+  public void ShowAddTowerWindow(GameObject towerSlot) {
+    addTowerWindow.SetActive(true);
+    addTowerWindow.GetComponent<AddTowerWindow>().towerSlotToAddTowerTo = towerSlot;
 
-    public void ShowDamage()
-    {
-        StartCoroutine(DoDamageAnimation());
-    }
+    UtilityMethods.MoveUiElementToWorldPosition(addTowerWindow.GetComponent<RectTransform>(), towerSlot.transform.position);
+  }
 
-    private IEnumerator DoDamageAnimation()
-    {
-        for (int i = 0; i < 3; i++)
-        {
-            yield return new WaitForSeconds(.1f);
-            damageCanvas.SetActive(true);
-            yield return new WaitForSeconds(.1f);
-            damageCanvas.SetActive(false);
-        }
+  public void ShowDamage() {
+    StartCoroutine(DoDamageAnimation());
+  }
+
+  private IEnumerator DoDamageAnimation() {
+    for (int i = 0; i < 3; i++) {
+      yield return new WaitForSeconds(.1f);
+      damageCanvas.SetActive(true);
+
+      yield return new WaitForSeconds(.1f);
+      damageCanvas.SetActive(false);
     }
+  }
+
+  public void ShowCenterWindow(string text) {
+    centerWindow.transform.Find("TxtWave").GetComponent<Text>().text = text;
+    StartCoroutine(EnableAndDisableCenterWindow());
+  }
+
+  private IEnumerator EnableAndDisableCenterWindow() {
+    for (int i = 0; i < 3; i++) {
+      yield return new WaitForSeconds(.4f);
+      centerWindow.SetActive(true);
+
+      yield return new WaitForSeconds(.4f);
+      centerWindow.SetActive(false);
+    }
+  }
+
+  public void ShowTowerInfoWindow(Tower tower) {
+    towerInfoWindow.GetComponent<TowerInfoWindow>().tower = tower;
+    towerInfoWindow.SetActive(true);
+
+    UtilityMethods.MoveUiElementToWorldPosition(towerInfoWindow.GetComponent<RectTransform>(), tower.transform.position);
+  }
+
+  public void CreateHealthBarForEnemy(Enemy enemy) {
+    GameObject healthBar = Instantiate(enemyHealthBarPrefab);
+    healthBar.transform.SetParent(enemyHealthBars, false);
+    healthBar.GetComponent<EnemyHealthBar>().enemy = enemy;
+  }
+
+  public void ShowWinScreen() {
+    blackBackground.SetActive(true);
+    winGameWindow.SetActive(true);
+  }
+
+  public void ShowLoseScreen() {
+    blackBackground.SetActive(true);
+    loseGameWindow.SetActive(true);
+  }
+
+
 }

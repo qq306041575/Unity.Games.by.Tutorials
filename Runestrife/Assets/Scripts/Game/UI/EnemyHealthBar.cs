@@ -34,7 +34,7 @@ public class EnemyHealthBar : MonoBehaviour {
   void Update() {
     if (enemy) {
       GetComponent<Slider>().value = enemy.health;
-     UtilityMethods.MoveUiElementToWorldPosition(GetComponent<RectTransform>(), enemy.transform.position + new Vector3(0, 0, 1));
+      UtilityMethods.MoveUiElementToWorldPosition(GetComponent<RectTransform>(), enemy.transform.position + new Vector3(0, 0, 1));
     }
     else {
       Destroy(gameObject);

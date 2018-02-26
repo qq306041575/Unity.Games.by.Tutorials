@@ -1,0 +1,9 @@
+{
+"TOTAL_MEMORY": 268435456,
+"dataUrl": "Runestrife-WebGL.data.unityweb",
+"asmCodeUrl": "Runestrife-WebGL.asm.code.unityweb",
+"asmMemoryUrl": "Runestrife-WebGL.asm.memory.unityweb",
+"asmFrameworkUrl": "Runestrife-WebGL.asm.framework.unityweb",
+"splashScreenStyle": "Dark",
+"backgroundColor": "#222C36"
+}
